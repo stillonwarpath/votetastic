@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DataService } from 'src/app/services/data.service';
 
 @Component({
   selector: 'app-votings-list',
@@ -7,9 +8,27 @@ import { Component, OnInit } from '@angular/core';
 })
 export class VotingsListComponent implements OnInit {
 
-  constructor() { }
+  votings: any[] = [];
+
+  constructor(
+    private dataService: DataService
+  ) { }
 
   ngOnInit(): void {
+    this.loadVotings();
   }
+
+  async loadVotings() {
+    this.votings = await this.dataService.getVotings();
+  }
+
+  async startVoting() {
+    const data = await this.dataService.startVoting();
+    console.log(
+      data
+    );
+  }
+
+
 
 }
