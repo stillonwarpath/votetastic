@@ -24,12 +24,15 @@ export class DataService {
                 voting_question: 'My question',
                 description: 'My description',
               });
+
+    
   }
 
   async getVotings() {
     const votings = await this.supabase
                .from(TABLE_VOTING)
-               .select('*');
+               .select('*')
+               .eq('creator_id', this.supabase.auth.user()?.id);
     return votings.data || [];
   }
 }
