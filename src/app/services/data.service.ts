@@ -35,4 +35,12 @@ export class DataService {
                .eq('creator_id', this.supabase.auth.user()?.id);
     return votings.data || [];
   }
+
+  async getVotingDetails(id: number) {
+    return this.supabase
+               .from(TABLE_VOTING)
+               .select('*')
+               .eq('id', id).single();
+  }
+
 }
