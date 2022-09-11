@@ -35,8 +35,10 @@ export class VotingsDetailsComponent implements OnInit {
     }
   }
 
-  updateVoting() {
+  async updateVoting() {
     console.log(this.form.value);
+    const result = await this.dataService.updateVotingDetails(this.form.value, this.voting.id);
+    console.log(result);
   }
 
 }

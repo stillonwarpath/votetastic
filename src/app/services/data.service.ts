@@ -43,4 +43,12 @@ export class DataService {
                .eq('id', id).single();
   }
 
+  async updateVotingDetails(voting: any, id: number) {
+    return this.supabase
+               .from(TABLE_VOTING)
+               .update(voting)
+               .eq('id', id)
+               .single();
+  }
+
 }
