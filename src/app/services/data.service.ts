@@ -51,4 +51,11 @@ export class DataService {
                .single();
   }
 
-}
+  async deleteVoting(id: number) {
+    console.log('id', id);
+    return this.supabase
+              .from(TABLE_VOTING)
+              .delete()
+              .match({id});
+  }
+ }

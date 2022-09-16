@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { DataService } from 'src/app/services/data.service';
 
 @Component({
@@ -17,6 +18,8 @@ export class VotingsDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private dataService: DataService,
     private fb: FormBuilder,
+    private toaster: ToastrService,
+    private router: Router,
   ) { 
     this.form = this.fb.group({
       voting_question: ['', Validators.required],
@@ -29,8 +32,8 @@ export class VotingsDetailsComponent implements OnInit {
   async ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (id) {
-      this.voting = await (await this.dataService.getVotingDetails(id)).data;
-      console.log(this.voting);
+      this.voting = (await this.dataService.getVotingDetails(id)).data;
+      console.log('Voting:', this.voting);
       this.form.patchValue(this.voting);
     }
   }
@@ -38,7 +41,18 @@ export class VotingsDetailsComponent implements OnInit {
   async updateVoting() {
     console.log(this.form.value);
     const result = await this.dataService.updateVotingDetails(this.form.value, this.voting.id);
-    console.log(result);
+    this.toaster.success('Voting updated!');
   }
+
+  async deleteVoting() {
+    const { data, error} = await this.dataService.deleteVoting(
+      Number(this.voting.id)
+    );
+    console.log('data:', data);
+    console.log('error:', error);
+    this.toaster.info('Voting deleted!');
+    this.router.navigateByUrl('/app');
+  }
+
 
 }
