@@ -3,6 +3,15 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from 'src/environments/environment';
 
 export const TABLE_VOTING = 'votings';
+export const TABLE_VOTING_OPTIONS = 'voting_options';
+
+export interface VotingOptions {
+  id?: number;
+  voting_id: number;
+  title: string;
+  creator_id?: string;
+  votes: number;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -58,4 +67,14 @@ export class DataService {
               .delete()
               .match({id});
   }
+
+  async addVotingOption(option: VotingOptions) {
+    option.creator_id = this.supabase.auth.user()?.id;
+    option.votes = 0;
+    return this.supabase
+               .from(TABLE_VOTING_OPTIONS)
+               .insert(option)
+
+  }
+
  }
