@@ -1,17 +1,10 @@
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from 'src/environments/environment';
+import { VotingOptions } from '../interfaces';
 
 export const TABLE_VOTING = 'votings';
 export const TABLE_VOTING_OPTIONS = 'voting_options';
-
-export interface VotingOptions {
-  id?: number;
-  voting_id: number;
-  title: string;
-  creator_id?: string;
-  votes: number;
-}
 
 @Injectable({
   providedIn: 'root'
@@ -68,13 +61,38 @@ export class DataService {
               .match({id});
   }
 
+  async getVotingOptions(votingId: number) {
+    return this.supabase
+               .from(TABLE_VOTING_OPTIONS)
+               .select('*')
+               .eq('voting_id', votingId);
+
+  }
+
   async addVotingOption(option: VotingOptions) {
     option.creator_id = this.supabase.auth.user()?.id;
     option.votes = 0;
+    delete option.id;
     return this.supabase
                .from(TABLE_VOTING_OPTIONS)
                .insert(option)
 
+  }
+
+  async updateVotingOption(option: VotingOptions) {
+    return this.supabase
+               .from(TABLE_VOTING_OPTIONS)
+               .update({title: option.title})
+               .eq('id', option.id);
+
+  }
+
+  async deleteVotingOption(id: number) {
+    return this.supabase
+              .from(TABLE_VOTING_OPTIONS)
+              .delete()
+              .eq('id', id)
+              .single();
   }
 
  }

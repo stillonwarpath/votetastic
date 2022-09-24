@@ -8,11 +8,13 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { ToastrModule } from 'ngx-toastr';
+import { VotingComponent } from './voting/voting.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
+    VotingComponent,
   ],
   imports: [
     CommonModule,

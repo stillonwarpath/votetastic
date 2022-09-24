@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { zip } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 
 @Component({
@@ -35,9 +36,21 @@ export class VotingsDetailsComponent implements OnInit {
 
   async ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
+
     if (id) {
       this.voting = (await this.dataService.getVotingDetails(id)).data;
       console.log('Voting:', this.voting);
+      const options = (await this.dataService.getVotingOptions(id)).data;
+
+      options?.map((item) => {
+        const option = this.fb.group({
+          title: [item.title, Validators.required],
+          id: item.id,
+        });
+        this.options.push(option);
+      });
+
+      console.log('Voting options: ', options);
       this.form.patchValue(this.voting);
     }
   }
@@ -71,7 +84,10 @@ export class VotingsDetailsComponent implements OnInit {
     this.options.push(option);
   }
 
-  deleteOption(index: number) {
+  async deleteOption(index: number) {
+    const control = this.options.at(index);
+    const id = control.value.id;
+    await this.dataService.deleteVotingOption(id);
     this.options.removeAt(index);
   }
 
@@ -80,13 +96,17 @@ export class VotingsDetailsComponent implements OnInit {
     const obs = [];
     for (let entry of this.formOptions.value.options) {
       if (!entry.id) {
-        console.log('ADD THIS: ', entry);
         const newObs = this.dataService.addVotingOption(entry);
         obs.push(newObs);
       } else {
-        //TODO: update answer
+        const newObs = this.dataService.updateVotingOption(entry);
+        obs.push(newObs);
       }
     }
+    zip(obs).subscribe(res => {
+      console.log('ADTER ADD: ', res);
+      this.toaster.success('Voting updated!');
+    });
   }
 
 
