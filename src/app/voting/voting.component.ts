@@ -10,7 +10,7 @@ import { DataService } from '../services/data.service';
 })
 export class VotingComponent implements OnInit {
 
-  voting = null;
+  voting: any = null;
   options: VotingOptions[] = [];
 
   constructor(
@@ -26,15 +26,15 @@ export class VotingComponent implements OnInit {
       const options = (await this.dataService.getVotingOptions(id)).data;
 
       options?.map((item) => {
-        const option = this.fb.group({
-          title: [item.title, Validators.required],
-          id: item.id,
-        });
-        this.options.push(option);
+        this.options.push(item);
       });
 
       console.log('Voting options: ', options);
-      this.form.patchValue(this.voting);
+  
     }
+  }
+
+  vote(option: VotingOptions) {
+    console.log(option);
   }
 }

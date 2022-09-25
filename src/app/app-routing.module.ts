@@ -15,7 +15,7 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: '/voting/:id',
+    path: 'voting/:id',
     component: VotingComponent
   },
 ];
